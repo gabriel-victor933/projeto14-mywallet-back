@@ -14,7 +14,7 @@ app.use(cors())
 const PORT = 5000
 
 
-const mongoClient = new MongoClient(process.env.DATABASE_URI)
+const mongoClient = new MongoClient(process.env.MONGO_URI)
 try {
     await mongoClient.connect()
 
@@ -186,4 +186,4 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
  })
 
-app.listen(PORT, ()=>{console.log(`rodando na porta ${PORT}`)})
+app.listen(process.env.PORT, ()=>{console.log(`rodando na porta ${process.env.PORT}`)})
