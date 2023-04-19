@@ -89,11 +89,10 @@ app.post("/cadastro",async (req,res)=>{
     }
 
 
-
     try{
 
         const user = await db.collection("users").find({email: req.body.email}).toArray()
-
+        console.log("ok")
         if(user.length !== 0){
             return res.status(409).send("o email já está sendo utilizado")
         }
@@ -106,6 +105,7 @@ app.post("/cadastro",async (req,res)=>{
         return res.status(201).send("ok")
 
     } catch(err){
+        console.log(err)
         return res.status(500).send(err)
     }
     
