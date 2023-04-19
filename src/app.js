@@ -82,10 +82,13 @@ app.post("/cadastro",async (req,res)=>{
 
     
     const {error} = schemaSignUp.validate(req.body)
+    console.log(error)
 
     if(error !== undefined){
         return res.status(422).send(error.details[0].message)
     }
+
+
 
     try{
 
