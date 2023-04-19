@@ -66,8 +66,6 @@ app.post("/",async (req,res)=> {
         const token = uuid()
 
         await db.collection("sessions").insertOne({token: token, userId: user._id})
-
-        console.log(token.length)
         
         return res.status(200).send(token)
         
@@ -156,6 +154,36 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
     
     
+ })
+
+
+ app.get("/transacoes",async (req,res)=>{
+
+    const { token } = req.headers
+
+    if(token === undefined){
+        return res.status(401).send("Token missing")
+    }
+
+    if(validToken.validate(token).error){
+
+        return res.status(422).send(validToken.validate(token).error.details[0].message)
+    }
+
+    try{
+
+        const [user] = await db.collection("sessions").find({token}).toArray()
+
+        if(user === undefined) return res.status(401).send("Token inválido")
+
+        const transacoes = await db.collection("transacoes").find({userId: user.userId}).toArray()
+
+        return res.status(200).send(transacoes)
+    } catch(err){
+        
+        return res.status(500).send(err)
+    }
+
  })
 
 app.listen(PORT, ()=>{console.log(`rodando na porta ${PORT}`)})
