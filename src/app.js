@@ -14,7 +14,7 @@ app.use(cors())
 const PORT = 5000
 
 
-const mongoClient = new MongoClient(process.env.MONGO_URI)
+const mongoClient = new MongoClient(process.env.DATABASE_URI)
 try {
     await mongoClient.connect()
 
@@ -44,7 +44,8 @@ const schemaTransacao = Joi.object({
 })
 
 const alt = Joi.alternatives().try("entrada","saida")
-const validToken = Joi.string().length(36)
+
+
 
 app.post("/",async (req,res)=> {
 
@@ -116,23 +117,24 @@ app.post("/cadastro",async (req,res)=>{
 
 app.post("/nova-transacao/:tipo",async (req,res)=>{
 
-    const { token } = req.headers
-    const { tipo } = req.params
 
+    const { tipo } = req.params
+    const token  = req.headers.authorization?.replace("Bearer","").trim()
 
     if(token === undefined){
         return res.status(401).send("Token missing")
     }
 
+    if(token.length !== 36){
+        return res.status(422).send("Token inválido")
+    }
+
+
     if(alt.validate(tipo).error){
         return res.status(422).send(alt.validate(tipo).error.details[0].message)
     }
 
-    if(validToken.validate(token).error){
-
-        return res.status(422).send(validToken.validate(token).error.details[0].message)
-    }
-
+    
     if(schemaTransacao.validate(req.body).error){
         console.log(schemaTransacao.validate(req.body).error)
 
@@ -162,15 +164,14 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
  app.get("/transacoes",async (req,res)=>{
 
-    const { token } = req.headers
+    const token  = req.headers.authorization?.replace("Bearer","").trim()
 
     if(token === undefined){
         return res.status(401).send("Token missing")
     }
 
-    if(validToken.validate(token).error){
-
-        return res.status(422).send(validToken.validate(token).error.details[0].message)
+    if(token.length !== 36){
+        return res.status(422).send("Token inválido")
     }
 
     try{
