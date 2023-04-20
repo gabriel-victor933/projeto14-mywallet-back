@@ -5,14 +5,13 @@ import dotenv from "dotenv"
 import Joi from "joi";
 import bcrypt from "bcrypt"
 import {v4 as uuid} from "uuid"
+import dayjs from "dayjs";
 
 dotenv.config()
 
 const app = express()
 app.use(express.json())
 app.use(cors())
-const PORT = 5000
-
 
 const mongoClient = new MongoClient(process.env.DATABASE_URI)
 try {
@@ -95,7 +94,7 @@ app.post("/cadastro",async (req,res)=>{
         const user = await db.collection("users").find({email: req.body.email}).toArray()
         console.log("ok")
         if(user.length !== 0){
-            return res.status(409).send("o email já está sendo utilizado")
+            return res.status(409).send("the email is already being used")
         }
 
         const {name,email} = req.body
@@ -148,7 +147,7 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
         if(user === undefined) return res.status(422).send("Token inválido")
 
-        await db.collection("transacoes").insertOne({userId: user.userId, tipo, valor: req.body.valor, descricao: req.body.descricao })
+        await db.collection("transacoes").insertOne({userId: user.userId, tipo, valor: req.body.valor, descricao: req.body.descricao,data: dayjs().format("DD/MM") })
 
         return res.send("ok")
 
@@ -163,6 +162,8 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
 
  app.get("/transacoes",async (req,res)=>{
+
+    console.log(req.headers)
 
     const token  = req.headers.authorization?.replace("Bearer","").trim()
 
