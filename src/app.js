@@ -163,8 +163,6 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
  app.get("/transacoes",async (req,res)=>{
 
-    console.log(req.headers)
-
     const token  = req.headers.authorization?.replace("Bearer","").trim()
 
     if(token === undefined){
@@ -183,7 +181,9 @@ app.post("/nova-transacao/:tipo",async (req,res)=>{
 
         const transacoes = await db.collection("transacoes").find({userId: user.userId}).toArray()
 
-        return res.status(200).send(transacoes)
+        const [{name}]  = await db.collection("users").find({_id: user.userId}).toArray()
+
+        return res.status(200).send({transacoes,name})
     } catch(err){
         
         return res.status(500).send(err)
