@@ -104,3 +104,43 @@ export async function deleteTransacao(req,res){
     }
 
 }
+
+export async function editarTransacao(req,res){
+
+    
+
+    const token  = req.headers.authorization?.replace("Bearer","").trim()
+    if(token ===undefined) return res.status(401).send("missing token")
+
+    const { id } = req.params
+    if(schemaId.validate(id).error){
+        return res.status(401).send(schemaId.validate(id).error.message.replace("value","id"))
+    }
+
+    if(schemaTransacao.validate(req.body).error){
+        console.log(schemaTransacao.validate(req.body).error)
+
+        return res.status(422).send(schemaTransacao.validate(req.body).error.details[0].message)
+    }
+
+    try{
+        const [user] = await db.collection("sessions").find({token}).toArray()
+
+        if(user === undefined) return res.status(401).send("Token inválido")
+
+        const query = {$and: [{_id: new ObjectId(id)},{userId: user.userId}]}
+
+        const [transacao] = await db.collection("transacoes").find(query).toArray()
+
+        if(transacao === undefined) return res.status(404).send("transacao não encontrada")
+
+        const update = {$set: {...transacao, valor: req.body.valor, descricao: req.body.descricao}}
+
+        await db.collection("transacoes").updateOne(query,update)
+        
+        res.status(202).send("Update")
+    } catch(err){
+        return res.status(500).send("Erro do servidor")
+    }
+    
+}

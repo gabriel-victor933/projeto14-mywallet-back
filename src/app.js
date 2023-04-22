@@ -4,7 +4,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import Joi from "joi";
 import { signIn,signUp } from "./controllers/userController.js";
-import { novatransacao, getTransacao, deleteTransacao } from "./controllers/transacoesController.js";
+import { novatransacao, getTransacao, deleteTransacao, editarTransacao } from "./controllers/transacoesController.js";
 
 dotenv.config()
 
@@ -57,5 +57,7 @@ app.post("/nova-transacao/:tipo",novatransacao)
 app.get("/transacoes",getTransacao)
 
 app.delete("/transacoes/:id",deleteTransacao)
+
+app.put("/transacoes/:id",editarTransacao)
 
 app.listen(process.env.PORT, ()=>{console.log(`rodando na porta ${process.env.PORT}`)})
