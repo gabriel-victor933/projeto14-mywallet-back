@@ -118,7 +118,6 @@ export async function editarTransacao(req,res){
     }
 
     if(schemaTransacao.validate(req.body).error){
-        console.log(schemaTransacao.validate(req.body).error)
 
         return res.status(422).send(schemaTransacao.validate(req.body).error.details[0].message)
     }

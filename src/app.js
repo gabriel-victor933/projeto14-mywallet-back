@@ -4,6 +4,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import transacoesRouter from "./routes/transacoesRouter.js"
 import userRouter from "./routes/userRouter.js"
+import validarTransacao from "./middleware/validarTransacao.js";
 
 dotenv.config()
 
@@ -12,6 +13,7 @@ app.use(express.json())
 app.use(cors())
 app.use(transacoesRouter)
 app.use(userRouter)
+app.use(validarTransacao)
 
 const mongoClient = new MongoClient(process.env.DATABASE_URI)
 try {
