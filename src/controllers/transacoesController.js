@@ -90,6 +90,11 @@ export async function deleteTransacao(req,res){
 
         const query = {$and: [{_id: new ObjectId(id)},{userId: user.userId}]}
 
+        const [transacao] = await db.collection("transacoes").find(query).toArray()
+
+
+        if(transacao === undefined) return res.status(404).send("transacao não encontrada")
+
         await db.collection("transacoes").deleteOne(query)
 
         res.status(202).send("delete")
