@@ -12,7 +12,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const mongoClient = new MongoClient(process.env.PRODUCTION_URI)
+const mongoClient = new MongoClient(process.env.DATABASE_URI)
 try {
     await mongoClient.connect()
 
