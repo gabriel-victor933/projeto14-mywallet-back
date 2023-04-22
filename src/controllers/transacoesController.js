@@ -1,5 +1,6 @@
-import {db, schemaTransacao, alt} from "../app.js"
+import {db, schemaTransacao, alt,schemaId} from "../app.js"
 import dayjs from "dayjs";
+import { ObjectId } from "mongodb";
 
 export async function novatransacao(req,res){
 
@@ -69,6 +70,32 @@ export async function getTransacao(req,res){
     } catch(err){
         
         return res.status(500).send(err)
+    }
+
+}
+
+export async function deleteTransacao(req,res){
+    const { id } = req.params
+    const token  = req.headers.authorization?.replace("Bearer","").trim()
+    if(token ===undefined) return res.status(401).send("missing token")
+
+    if(schemaId.validate(id).error){
+        return res.status(401).send(schemaId.validate(id).error.message.replace("value","id"))
+    }
+
+    try{
+        const [user] = await db.collection("sessions").find({token}).toArray()
+
+        if(user === undefined) return res.status(401).send("Token inválido")
+
+        const query = {$and: [{_id: new ObjectId(id)},{userId: user.userId}]}
+
+        await db.collection("transacoes").deleteOne(query)
+
+        res.status(202).send("delete")
+
+    } catch(err){
+        res.status(500).send(err)
     }
 
 }

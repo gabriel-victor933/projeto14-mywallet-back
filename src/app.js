@@ -4,7 +4,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import Joi from "joi";
 import { signIn,signUp } from "./controllers/userController.js";
-import { novatransacao, getTransacao } from "./controllers/transacoesController.js";
+import { novatransacao, getTransacao, deleteTransacao } from "./controllers/transacoesController.js";
 
 dotenv.config()
 
@@ -12,7 +12,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const mongoClient = new MongoClient(process.env.DATABASE_URI)
+const mongoClient = new MongoClient(process.env.PRODUCTION_URI)
 try {
     await mongoClient.connect()
 
@@ -43,6 +43,8 @@ export const schemaTransacao = Joi.object({
     descricao: Joi.string().required()
 })
 
+export const schemaId = Joi.string().alphanum().length(24)
+
 export const alt = Joi.alternatives().try("entrada","saida")
 
 //
@@ -52,6 +54,8 @@ app.post("/cadastro",signUp)
 
 app.post("/nova-transacao/:tipo",novatransacao)
 
- app.get("/transacoes",getTransacao)
+app.get("/transacoes",getTransacao)
+
+app.delete("/transacoes/:id",deleteTransacao)
 
 app.listen(process.env.PORT, ()=>{console.log(`rodando na porta ${process.env.PORT}`)})
