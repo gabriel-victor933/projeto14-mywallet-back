@@ -1,6 +1,8 @@
-import {db, schemaLogin, schemaSignUp} from "../app.js"
+import {db} from "../app.js"
 import bcrypt from "bcrypt"
 import {v4 as uuid} from "uuid"
+import {schemaLogin} from "../schema/schemaLogin.js"
+import {schemaSignUp} from "../schema/schemaSignUp.js"
 
 
 
@@ -37,7 +39,6 @@ export async function signUp(req,res){
 
     
     const {error} = schemaSignUp.validate(req.body)
-    console.log(error)
 
     if(error !== undefined){
         return res.status(422).send(error.details[0].message)
@@ -47,7 +48,6 @@ export async function signUp(req,res){
     try{
 
         const user = await db.collection("users").find({email: req.body.email}).toArray()
-        console.log("ok")
         if(user.length !== 0){
             return res.status(409).send("the email is already being used")
         }

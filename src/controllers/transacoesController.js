@@ -1,4 +1,6 @@
-import {db, schemaTransacao, alt,schemaId} from "../app.js"
+import {db} from "../app.js"
+import {schemaTransacao} from "../schema/schemaTransacao.js"
+import {alt,schemaId} from "../schema/schemas.js"
 import dayjs from "dayjs";
 import { ObjectId } from "mongodb";
 
@@ -23,7 +25,6 @@ export async function novatransacao(req,res){
 
     
     if(schemaTransacao.validate(req.body).error){
-        console.log(schemaTransacao.validate(req.body).error)
 
         return res.status(422).send(schemaTransacao.validate(req.body).error.details[0].message)
     }
@@ -40,7 +41,6 @@ export async function novatransacao(req,res){
         return res.send("ok")
 
     } catch(err){
-        console.log(err)
         return res.status(500).send(err)
     }
     
