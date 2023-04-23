@@ -26,4 +26,5 @@ try {
 
 export const db = mongoClient.db()
 
+
 app.listen(process.env.PORT, ()=>{console.log(`rodando na porta ${process.env.PORT}`)})

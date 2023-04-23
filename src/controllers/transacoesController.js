@@ -64,7 +64,7 @@ export async function getTransacao(req,res){
 
         if(user === undefined) return res.status(401).send("Token inválido")
 
-        const transacoes = await db.collection("transacoes").find({userId: user.userId}).toArray()
+        const transacoes = await db.collection("transacoes").find({userId: user.userId}).sort({_id: -1}).toArray()
         return res.status(200).send(transacoes)
 
     } catch(err){
