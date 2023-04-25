@@ -8,10 +8,14 @@ import {schemaSignUp} from "../schema/schemaSignUp.js"
 
 export async function signIn(req,res){
 
-    const {error} = schemaLogin.validate(req.body)
+    const {error} = schemaLogin.validate(req.body,{abortEarly: false})
 
     if(error !== undefined){
-        return res.status(422).send(error.details[0].message)
+
+        const errors = error.details.map((e)=> e.message)
+        return res.status(422).send(errors)
+
+        
     }
 
     const {email, password} = req.body
@@ -38,10 +42,12 @@ export async function signIn(req,res){
 export async function signUp(req,res){
 
     
-    const {error} = schemaSignUp.validate(req.body)
+    const {error} = schemaSignUp.validate(req.body,{abortEarly: false})
 
     if(error !== undefined){
-        return res.status(422).send(error.details[0].message)
+
+        const errors = error.details.map((e)=> e.message)
+        return res.status(422).send(errors)
     }
 
 
